@@ -1,4 +1,4 @@
-PeaceAndQuiet = LibStub("AceAddon-3.0"):NewAddon("PeaceAndQuiet", "AceConsole-3.0", "AceEvent-3.0")
+local PeaceAndQuiet = LibStub("AceAddon-3.0"):NewAddon("PeaceAndQuiet", "AceConsole-3.0", "AceEvent-3.0")
 
 local L = LibStub("AceLocale-3.0"):GetLocale("PeaceAndQuiet", true)
 
