@@ -1,4 +1,5 @@
 ## Interface: 30300
+## X-Compatible-With: 40000
 ## Title: Peace and Quiet
 ## Notes: Automatically leaves the global channels when inside an instance/raid and restores them when exited.
 ## Author: Talryn
