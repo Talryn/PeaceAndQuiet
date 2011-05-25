@@ -1,17 +1,5 @@
-local L = LibStub("AceLocale-3.0"):NewLocale("PeaceAndQuiet", "enUS", true)
+local L = LibStub("AceLocale-3.0"):NewLocale("PeaceAndQuiet", "enUS", true, false)
 
 if not L then return end
 
-L["Displaying global channels"] = true
-L["Hiding the global channels"] = true
-
-L["Verbose"] = true
-L["Toggles the display of informational messages."] = true
-L["Manage General Channel"] = true
-L["Toggles whether the General chat channel is automatically enabled/disabled."] = true
-L["Manage Local Defense Channel"] = true
-L["Toggles whether the Local Defense chat channel is automatically enabled/disabled."] = true
-
--- The chat channel names
-L["General"] = true
-L["LocalDefense"] = true
+--@localization(locale="enUS", format="lua_additive_table", handle-unlocalized="english", escape-non-ascii=false, same-key-is-true=true)@
