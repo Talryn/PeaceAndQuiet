@@ -1,6 +1,8 @@
-local PeaceAndQuiet = LibStub("AceAddon-3.0"):NewAddon("PeaceAndQuiet", "AceConsole-3.0", "AceEvent-3.0")
+local _G = getfenv(0)
 
-local L = LibStub("AceLocale-3.0"):GetLocale("PeaceAndQuiet", true)
+local PeaceAndQuiet = _G.LibStub("AceAddon-3.0"):NewAddon("PeaceAndQuiet", "AceConsole-3.0", "AceEvent-3.0")
+
+local L = _G.LibStub("AceLocale-3.0"):GetLocale("PeaceAndQuiet", true)
 
 local defaults = {
     profile = {
@@ -54,19 +56,19 @@ end
 
 function PeaceAndQuiet:ChatCommand(input)
     if not input or input:trim() == "" then
-        InterfaceOptionsFrame_OpenToCategory(self.optionsFrame)
+        _G.InterfaceOptionsFrame_OpenToCategory(self.optionsFrame)
     else
-        LibStub("AceConfigCmd-3.0").HandleCommand(PeaceAndQuiet, "paq", "PeaceAndQuiet", input)
+        _G.LibStub("AceConfigCmd-3.0").HandleCommand(PeaceAndQuiet, "paq", "PeaceAndQuiet", input)
     end
 end
 
 function PeaceAndQuiet:OnInitialize()
     -- Load the settings
-    self.db = LibStub("AceDB-3.0"):New("PeaceAndQuietDB", defaults, "Default")
+    self.db = _G.LibStub("AceDB-3.0"):New("PeaceAndQuietDB", defaults, "Default")
 
     -- Register the options table
-    LibStub("AceConfig-3.0"):RegisterOptionsTable("PeaceAndQuiet", self:GetOptions())
-	self.optionsFrame = LibStub("AceConfigDialog-3.0"):AddToBlizOptions(
+    _G.LibStub("AceConfig-3.0"):RegisterOptionsTable("PeaceAndQuiet", self:GetOptions())
+	self.optionsFrame = _G.LibStub("AceConfigDialog-3.0"):AddToBlizOptions(
 	    "PeaceAndQuiet", "Peace And Quiet")
 
     self:RegisterChatCommand("peaceandquiet", "ChatCommand")
@@ -87,7 +89,7 @@ function PeaceAndQuiet:OnDisable()
 end
 
 function PeaceAndQuiet:PLAYER_ENTERING_WORLD()
-    local isInstance, instanceType = IsInInstance()
+    local isInstance, instanceType = _G.IsInInstance()
 
     if instanceType == "none" or instanceType == "pvp" then
         -- Player is in the world or a battleground
@@ -95,10 +97,10 @@ function PeaceAndQuiet:PLAYER_ENTERING_WORLD()
             self:Print(L["Displaying global channels"])
         end
         if self.db.profile.manageGeneral == true then
-            ChatFrame_AddChannel(DEFAULT_CHAT_FRAME, L["General"])
+            _G.ChatFrame_AddChannel(_G.DEFAULT_CHAT_FRAME, L["General"])
         end
         if self.db.profile.manageLocalDefense == true then
-            ChatFrame_AddChannel(DEFAULT_CHAT_FRAME, L["LocalDefense"])
+            _G.ChatFrame_AddChannel(_G.DEFAULT_CHAT_FRAME, L["LocalDefense"])
         end
     else
         -- Player is in an instance, raid, or arena
@@ -106,10 +108,10 @@ function PeaceAndQuiet:PLAYER_ENTERING_WORLD()
             self:Print(L["Hiding the global channels"])
         end
         if self.db.profile.manageGeneral == true then
-            ChatFrame_RemoveChannel(DEFAULT_CHAT_FRAME, L["General"])
+            _G.ChatFrame_RemoveChannel(_G.DEFAULT_CHAT_FRAME, L["General"])
         end
         if self.db.profile.manageLocalDefense == true then
-            ChatFrame_RemoveChannel(DEFAULT_CHAT_FRAME, L["LocalDefense"])
+            _G.ChatFrame_RemoveChannel(_G.DEFAULT_CHAT_FRAME, L["LocalDefense"])
         end
     end
 end
