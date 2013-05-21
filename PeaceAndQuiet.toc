@@ -1,4 +1,4 @@
-## Interface: 50200
+## Interface: 50300
 ## Title: Peace and Quiet
 ## Notes: Automatically leaves the global channels when inside an instance/raid and restores them when exited.
 ## Author: Talryn
