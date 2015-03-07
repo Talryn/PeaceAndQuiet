@@ -5,113 +5,131 @@ local PeaceAndQuiet = _G.LibStub("AceAddon-3.0"):NewAddon("PeaceAndQuiet", "AceC
 local L = _G.LibStub("AceLocale-3.0"):GetLocale("PeaceAndQuiet", true)
 
 local defaults = {
-    profile = {
-        verbose = true,
-        manageGeneral = true,
-        manageLocalDefense = true
-    }
+	profile = {
+		verbose = true,
+		manageGeneral = true,
+		manageLocalDefense = true,
+		manageLFG = true,
+	}
 }
 
 local options
 
 function PeaceAndQuiet:GetOptions()
-    if not options then
-        options = {
-            name = "PeaceAndQuiet",
-            type = 'group',
-            args = {
-                verbose = {
-                    name = L["Verbose"],
-                    desc = L["Toggles the display of informational messages."],
-                    type = "toggle",
-                    width = "double",
-                    set = function(info, val) self.db.profile.verbose = val end,
-                    get = function(info) return self.db.profile.verbose end,
-                    order = 10
-                },
-                manageGeneral = {
-                    name = L["Manage General Channel"],
-                    desc = L["Toggles whether the General chat channel is automatically enabled/disabled."],
-                    type = "toggle",
-                    width = "double",
-                    set = function(info, val) self.db.profile.manageGeneral = val end,
-                    get = function(info) return self.db.profile.manageGeneral end,
-                    order = 20
-                },
-                manageLocalDefense = {
-                    name = L["Manage Local Defense Channel"],
-                    desc = L["Toggles whether the Local Defense chat channel is automatically enabled/disabled."],
-                    type = "toggle",
-                    width = "double",
-                    set = function(info, val) self.db.profile.manageLocalDefense = val end,
-                    get = function(info) return self.db.profile.manageLocalDefense end,
-                    order = 30
-                }
-            }
-        }
-    end
+	if not options then
+		options = {
+			name = "PeaceAndQuiet",
+			type = 'group',
+			args = {
+				verbose = {
+					name = L["Verbose"],
+					desc = L["Toggles the display of informational messages."],
+					type = "toggle",
+					width = "double",
+					set = function(info, val) self.db.profile.verbose = val end,
+					get = function(info) return self.db.profile.verbose end,
+					order = 10,
+				},
+				manageGeneral = {
+					name = L["Manage General Channel"],
+					desc = L["Toggles whether the General chat channel is automatically enabled/disabled."],
+					type = "toggle",
+					width = "double",
+					set = function(info, val) self.db.profile.manageGeneral = val end,
+					get = function(info) return self.db.profile.manageGeneral end,
+					order = 20,
+				},
+				manageLocalDefense = {
+					name = L["Manage Local Defense Channel"],
+					desc = L["Toggles whether the Local Defense chat channel is automatically enabled/disabled."],
+					type = "toggle",
+					width = "double",
+					set = function(info, val) self.db.profile.manageLocalDefense = val end,
+					get = function(info) return self.db.profile.manageLocalDefense end,
+					order = 30,
+				},
+				manageLFG = {
+					name = L["Manage LFG Channel"],
+					desc = L["ManageLFGChannel_Desc"],
+					type = "toggle",
+					width = "double",
+					set = function(info, val) self.db.profile.manageLFG = val end,
+					get = function(info) return self.db.profile.manageLFG end,
+					order = 40,
+				}
+			}
+		}
+	end
         
-    return options
+	return options
 end
 
 function PeaceAndQuiet:ChatCommand(input)
-    if not input or input:trim() == "" then
-        _G.InterfaceOptionsFrame_OpenToCategory(self.optionsFrame)
-    else
-        _G.LibStub("AceConfigCmd-3.0").HandleCommand(PeaceAndQuiet, "paq", "PeaceAndQuiet", input)
-    end
+	if not input or input:trim() == "" then
+		_G.InterfaceOptionsFrame_OpenToCategory(self.optionsFrame)
+	else
+		_G.LibStub("AceConfigCmd-3.0").HandleCommand(PeaceAndQuiet, "paq", 
+			"PeaceAndQuiet", input)
+	end
 end
 
 function PeaceAndQuiet:OnInitialize()
-    -- Load the settings
-    self.db = _G.LibStub("AceDB-3.0"):New("PeaceAndQuietDB", defaults, "Default")
+	-- Load the settings
+	self.db = _G.LibStub("AceDB-3.0"):New("PeaceAndQuietDB", defaults, "Default")
 
-    -- Register the options table
-    _G.LibStub("AceConfig-3.0"):RegisterOptionsTable("PeaceAndQuiet", self:GetOptions())
+	-- Register the options table
+	_G.LibStub("AceConfig-3.0"):RegisterOptionsTable("PeaceAndQuiet",
+		self:GetOptions())
 	self.optionsFrame = _G.LibStub("AceConfigDialog-3.0"):AddToBlizOptions(
-	    "PeaceAndQuiet", "Peace And Quiet")
+		"PeaceAndQuiet", "Peace And Quiet")
 
-    self:RegisterChatCommand("peaceandquiet", "ChatCommand")
-    self:RegisterChatCommand("paq", "ChatCommand")
+	self:RegisterChatCommand("peaceandquiet", "ChatCommand")
+	self:RegisterChatCommand("paq", "ChatCommand")
 
-    -- Register to receive the PLAYER_ENTERING_WORLD event
-    self:RegisterEvent("PLAYER_ENTERING_WORLD")
+	-- Register to receive the PLAYER_ENTERING_WORLD event
+	self:RegisterEvent("PLAYER_ENTERING_WORLD")
 end
 
 function PeaceAndQuiet:OnEnable()
-    -- Register to receive the PLAYER_ENTERING_WORLD event
-    self:RegisterEvent("PLAYER_ENTERING_WORLD")
+	-- Register to receive the PLAYER_ENTERING_WORLD event
+	self:RegisterEvent("PLAYER_ENTERING_WORLD")
 end
 
 function PeaceAndQuiet:OnDisable()
-    -- Unregister events
-    self:UnregisterEvent("PLAYER_ENTERING_WORLD")
+	-- Unregister events
+	self:UnregisterEvent("PLAYER_ENTERING_WORLD")
 end
 
 function PeaceAndQuiet:PLAYER_ENTERING_WORLD()
-    local isInstance, instanceType = _G.IsInInstance()
+	local isInstance, instanceType = _G.IsInInstance()
 
-    if instanceType == "none" or instanceType == "pvp" then
-        -- Player is in the world or a battleground
-        if self.db.profile.verbose then
-            self:Print(L["Displaying global channels"])
-        end
-        if self.db.profile.manageGeneral == true then
-            _G.ChatFrame_AddChannel(_G.DEFAULT_CHAT_FRAME, L["General"])
-        end
-        if self.db.profile.manageLocalDefense == true then
-            _G.ChatFrame_AddChannel(_G.DEFAULT_CHAT_FRAME, L["LocalDefense"])
-        end
-    else
-        -- Player is in an instance, raid, or arena
-        if self.db.profile.verbose then
-            self:Print(L["Hiding the global channels"])
-        end
-        if self.db.profile.manageGeneral == true then
-            _G.ChatFrame_RemoveChannel(_G.DEFAULT_CHAT_FRAME, L["General"])
-        end
-        if self.db.profile.manageLocalDefense == true then
-            _G.ChatFrame_RemoveChannel(_G.DEFAULT_CHAT_FRAME, L["LocalDefense"])
-        end
-    end
+	if instanceType == "none" or instanceType == "pvp" then
+		-- Player is in the world or a battleground
+		if self.db.profile.verbose then
+			self:Print(L["Displaying global channels"])
+		end
+		if self.db.profile.manageGeneral == true then
+			_G.ChatFrame_AddChannel(_G.DEFAULT_CHAT_FRAME, L["General"])
+		end
+		if self.db.profile.manageLocalDefense == true then
+			_G.ChatFrame_AddChannel(_G.DEFAULT_CHAT_FRAME, L["LocalDefense"])
+		end
+		if self.db.profile.manageLFG == true then
+			_G.ChatFrame_AddChannel(_G.DEFAULT_CHAT_FRAME, L["LookingForGroup"])
+		end
+	else
+		-- Player is in an instance, raid, or arena
+		if self.db.profile.verbose then
+			self:Print(L["Hiding the global channels"])
+		end
+		if self.db.profile.manageGeneral == true then
+			_G.ChatFrame_RemoveChannel(_G.DEFAULT_CHAT_FRAME, L["General"])
+		end
+		if self.db.profile.manageLocalDefense == true then
+			_G.ChatFrame_RemoveChannel(_G.DEFAULT_CHAT_FRAME, L["LocalDefense"])
+		end
+		if self.db.profile.manageLFG == true then
+			_G.ChatFrame_RemoveChannel(_G.DEFAULT_CHAT_FRAME, L["LookingForGroup"])
+		end
+	end
 end
