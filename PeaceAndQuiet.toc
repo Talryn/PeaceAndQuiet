@@ -6,7 +6,9 @@
 ## SavedVariables: PeaceAndQuietDB
 ## OptionalDeps: Ace3
 ## X-Embeds: Ace3
-## X-Category: Interface Enhancements 
+## X-Category: Interface Enhancements
+## X-Curse-Project-ID: 25333
+## X-WoWI-ID: 17703
 
 embeds.xml
 
