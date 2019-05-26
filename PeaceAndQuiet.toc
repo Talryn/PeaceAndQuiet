@@ -7,7 +7,7 @@
 ## OptionalDeps: Ace3
 ## X-Embeds: Ace3
 ## X-Category: Interface Enhancements
-## X-Curse-Project-ID: 25333
+## X-Curse-Project-ID: 25564
 ## X-WoWI-ID: 17703
 
 embeds.xml
