@@ -1,4 +1,7 @@
 ## Interface: 90005
+## Interface-Retail: 90005
+## Interface-Classic: 11306
+## Interface-BC: 20501
 ## Title: Peace and Quiet
 ## Notes: Automatically leaves the global channels when inside an instance/raid and restores them when exited.
 ## Author: Talryn
