@@ -10,10 +10,29 @@ local defaults = {
 		manageGeneral = true,
 		manageLocalDefense = true,
 		manageLFG = true,
+		windows = {
+			["General"] = 0,
+			["LocalDefense"] = 0,
+			["LookingForGroup"] = 0,
+		}
 	}
 }
 
 local options
+
+function getChatChannelValues()
+	local values = {
+		[0] = L["Default"]
+	}
+	for index = 1, _G.NUM_CHAT_WINDOWS do
+		local name = _G.GetChatWindowInfo(index)
+		if name and _G.type(name) == "string" then
+			local nameFmt = "%d - %s"
+			values[index] = nameFmt:format(index, name)
+		end
+	end
+	return values
+end
 
 function PeaceAndQuiet:GetOptions()
 	if not options then
@@ -56,11 +75,38 @@ function PeaceAndQuiet:GetOptions()
 					set = function(info, val) self.db.profile.manageLFG = val end,
 					get = function(info) return self.db.profile.manageLFG end,
 					order = 40,
-				}
+				},
+				windowHeader = {
+					order = 100,
+					type = "header",
+					name = L["Chat Windows"],
+				},
+				desc = {
+					order = 110,
+					type = "description",
+					name = L["ChatWindows_Desc"],
+				},
 			}
 		}
+
+		local index = 1
+		for name, value in _G.pairs(self.db.profile.windows) do
+			if name and _G.type(name) == "string" and name ~= "" then
+				options.args["window-"..name] = {
+					order = 120 + index,
+					name = L[name],
+					desc = L[name],
+					type = "select",
+					width = "double",
+					set = function(info, val) self.db.profile.windows[name] = val end,
+					get = function(info) return self.db.profile.windows[name] end,
+					values = getChatChannelValues,
+				}
+			end
+			index = index + 1
+		end	
 	end
-        
+    
 	return options
 end
 
@@ -100,6 +146,13 @@ function PeaceAndQuiet:OnDisable()
 	self:UnregisterEvent("PLAYER_ENTERING_WORLD")
 end
 
+function PeaceAndQuiet:getChatFrame(channelName)
+	local defaultChannel = _G.DEFAULT_CHAT_FRAME
+	local index = self.db.profile.windows[channelName] or 0
+	if index == 0 then return defaultChannel end
+	return _G["ChatFrame"..index] or defaultChannel
+end
+
 function PeaceAndQuiet:PLAYER_ENTERING_WORLD()
 	local isInstance, instanceType = _G.IsInInstance()
 
@@ -109,13 +162,19 @@ function PeaceAndQuiet:PLAYER_ENTERING_WORLD()
 			self:Print(L["Displaying global channels"])
 		end
 		if self.db.profile.manageGeneral == true then
-			_G.ChatFrame_AddChannel(_G.DEFAULT_CHAT_FRAME, L["General"])
+			_G.ChatFrame_AddChannel(
+				self:getChatFrame("General"), L["General"]
+			)
 		end
 		if self.db.profile.manageLocalDefense == true then
-			_G.ChatFrame_AddChannel(_G.DEFAULT_CHAT_FRAME, L["LocalDefense"])
+			_G.ChatFrame_AddChannel(
+				self:getChatFrame("LocalDefense"), L["LocalDefense"]
+			)
 		end
 		if self.db.profile.manageLFG == true then
-			_G.ChatFrame_AddChannel(_G.DEFAULT_CHAT_FRAME, L["LookingForGroup"])
+			_G.ChatFrame_AddChannel(
+				self:getChatFrame("LookingForGroup"), L["LookingForGroup"]
+			)
 		end
 	else
 		-- Player is in an instance, raid, or arena
@@ -123,13 +182,19 @@ function PeaceAndQuiet:PLAYER_ENTERING_WORLD()
 			self:Print(L["Hiding the global channels"])
 		end
 		if self.db.profile.manageGeneral == true then
-			_G.ChatFrame_RemoveChannel(_G.DEFAULT_CHAT_FRAME, L["General"])
+			_G.ChatFrame_RemoveChannel(
+				self:getChatFrame("General"), L["General"]
+			)
 		end
 		if self.db.profile.manageLocalDefense == true then
-			_G.ChatFrame_RemoveChannel(_G.DEFAULT_CHAT_FRAME, L["LocalDefense"])
+			_G.ChatFrame_RemoveChannel(
+				self:getChatFrame("LocalDefense"), L["LocalDefense"]
+			)
 		end
 		if self.db.profile.manageLFG == true then
-			_G.ChatFrame_RemoveChannel(_G.DEFAULT_CHAT_FRAME, L["LookingForGroup"])
+			_G.ChatFrame_RemoveChannel(
+				self:getChatFrame("LookingForGroup"), L["LookingForGroup"]
+			)
 		end
 	end
 end
