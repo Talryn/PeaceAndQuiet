@@ -13,6 +13,7 @@
 ## X-Category: Interface Enhancements
 ## X-Curse-Project-ID: 25564
 ## X-WoWI-ID: 17703
+## X-Wago-ID: 0mNwBeGo
 
 embeds.xml
 
