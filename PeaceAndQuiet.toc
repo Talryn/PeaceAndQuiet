@@ -1,5 +1,5 @@
-## Interface: 100000
-## Interface-Retail: 100000
+## Interface: 100100
+## Interface-Retail: 100100
 ## Interface-Classic: 11403
 ## Interface-BCC: 20504
 ## Interface-Wrath: 30400
@@ -9,6 +9,7 @@
 ## Version: @project-version@
 ## SavedVariables: PeaceAndQuietDB
 ## OptionalDeps: Ace3
+## IconTexture: Interface\ICONS\UI_Chat.blp
 ## X-Embeds: Ace3
 ## X-Category: Interface Enhancements
 ## X-Curse-Project-ID: 25564
