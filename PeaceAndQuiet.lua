@@ -1,6 +1,7 @@
 local _G = getfenv(0)
+local ADDON_NAME, addon = ...
 
-local PeaceAndQuiet = _G.LibStub("AceAddon-3.0"):NewAddon("PeaceAndQuiet", "AceConsole-3.0", "AceEvent-3.0")
+local PeaceAndQuiet = _G.LibStub("AceAddon-3.0"):NewAddon("PeaceAndQuiet", "AceConsole-3.0", "AceEvent-3.0", "AceTimer-3.0")
 
 local L = _G.LibStub("AceLocale-3.0"):GetLocale("PeaceAndQuiet", true)
 
@@ -10,6 +11,7 @@ local defaults = {
 		manageGeneral = true,
 		manageLocalDefense = true,
 		manageLFG = true,
+		enteringDelay = 1,
 		windows = {
 			["General"] = 0,
 			["LocalDefense"] = 0,
@@ -19,6 +21,7 @@ local defaults = {
 }
 
 local options
+addon.enteringTimer = nil
 
 function getChatChannelValues()
 	local values = {
@@ -132,6 +135,8 @@ function PeaceAndQuiet:OnInitialize()
 	self:RegisterChatCommand("peaceandquiet", "ChatCommand")
 	self:RegisterChatCommand("paq", "ChatCommand")
 
+	addon.enteringDelay = math.max(math.min(self.db.profile.enteringDelay or 0, 5), 0)
+
 	-- Register to receive the PLAYER_ENTERING_WORLD event
 	self:RegisterEvent("PLAYER_ENTERING_WORLD")
 end
@@ -154,6 +159,15 @@ function PeaceAndQuiet:getChatFrame(channelName)
 end
 
 function PeaceAndQuiet:PLAYER_ENTERING_WORLD()
+	if addon.enteringDelay == 0 then
+		self:ProcessZoneChange()
+	elseif not addon.enteringTimer then
+		addon.enteringTimer = self:ScheduleTimer("ProcessZoneChange", addon.enteringDelay or 1)
+	end
+end
+
+function PeaceAndQuiet:ProcessZoneChange()
+	addon.enteringTimer = nil
 	local isInstance, instanceType = _G.IsInInstance()
 
 	if instanceType == "none" or instanceType == "pvp" then
